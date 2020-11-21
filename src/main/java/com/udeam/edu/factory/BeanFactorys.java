@@ -14,11 +14,13 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 工厂Bean
+ * Bean 工厂
  */
 public class BeanFactorys {
 
     private final static Map<String, Object> iocMap = new HashMap<>();
+
+
 
     static {
         // 1 读取解析beans.xml  通过反射技术,生产bean对象,并将其存在map中
@@ -55,6 +57,7 @@ public class BeanFactorys {
                 System.out.println(id + " ---> " + clasz);
                 //通过反射创建对象
                 try {
+
                     Object o = Class.forName(clasz).newInstance();
                     //存入ioc容器
                     iocMap.put(id, o);
@@ -89,6 +92,8 @@ public class BeanFactorys {
                     //方法就是set属性反方
                     if (methods[i].getName().equalsIgnoreCase("set" + name)) {
                         try {
+                            //强制访问
+                            methods[i].setAccessible(true);
                             //set设置对象
                             methods[i].invoke(o, iocMap.get(ref));
                         } catch (IllegalAccessException e) {
@@ -111,10 +116,6 @@ public class BeanFactorys {
             e.printStackTrace();
         }
 
-
-        // 2 对外提供获取示例对象接口
-
-
     }
 
     /**
@@ -124,8 +125,7 @@ public class BeanFactorys {
      * @return
      */
     public static Object getBean(String id) {
-        //System.out.println("icoMap === " + iocMap);
-        //System.out.println("icoMap = " + iocMap.get(id));
         return iocMap.get(id);
     }
+
 }
